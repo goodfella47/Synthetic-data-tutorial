@@ -5,8 +5,31 @@ import numpy as np
 import argparse
 import random
 import os
+import glob
 import json
 from colorsys import hsv_to_rgb
+
+
+def get_hdr_img_paths_from_haven(data_path: str) -> str:
+    """ Returns .hdr file paths from the given directory.
+
+    :param data_path: A path pointing to a directory containing .hdr files.
+    :return: .hdr file paths
+    """
+
+    if os.path.exists(data_path):
+        data_path = os.path.join(data_path, "hdris")
+        if not os.path.exists(data_path):
+            raise FileNotFoundError(f"The folder: {data_path} does not contain a folder name hdfris. "
+                                    f"Please use the download script.")
+    else:
+        raise FileNotFoundError(f"The data path does not exists: {data_path}")
+
+    hdr_files = glob.glob(os.path.join(data_path, "*", "*.hdr"))
+    # this will be ensure that the call is deterministic
+    hdr_files.sort()
+    return hdr_files
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--obj', default="surgical_tools_models/needle_holder/NH1.obj", help="Path to the object file.")
@@ -14,10 +37,17 @@ parser.add_argument('--camera_params', default="camera.json", help="Camera intri
 parser.add_argument('--output_dir', default="", help="Path to where the final files, will be saved")
 parser.add_argument('--num_images', type=int, default=25, help="Number of images to generate")
 parser.add_argument('--haven_path', default="/datashare/haven/", help="Path to the haven hdri images")
+parser.add_argument('--debug', action='store_true', help="Enable debug mode")
 
 args = parser.parse_args()
 
 bproc.init()
+
+if args.debug:
+    import debugpy
+    debugpy.listen(5678)
+    print("Waiting for debugger attach")
+    debugpy.wait_for_client()
 
 # load the objects into the scene
 obj = bproc.loader.load_obj(args.obj)[0]
@@ -69,6 +99,9 @@ K = np.array([[fx, 0, cx],
               [0, 0, 1]])
 CameraUtility.set_intrinsics_from_K_matrix(K, im_width, im_height) 
 
+# load hdris
+hdr_files = get_hdr_img_paths_from_haven(args.haven_path)
+
 # Sample camera poses
 poses = 0
 tries = 0
@@ -78,8 +111,8 @@ while tries < 10000 and poses < args.num_images:
     bpy.data.worlds["World"].node_tree.nodes["Background"].inputs[1].default_value = np.random.uniform(0.1, 1.5)
 
     # Set a random hdri from the given haven directory as background
-    haven_hdri_path = bproc.loader.get_random_world_background_hdr_img_path_from_haven(args.haven_path)
-    bproc.world.set_world_background_hdr_img(haven_hdri_path)
+    random_hdr_file = random.choice(hdr_files)
+    bproc.world.set_world_background_hdr_img(random_hdr_file)
 
     # Sample random camera location around the object
     location = bproc.sampler.shell(
@@ -100,6 +133,7 @@ while tries < 10000 and poses < args.num_images:
         bproc.camera.add_camera_pose(cam2world_matrix, frame=poses)
         poses += 1
     tries += 1
+    print(tries)
 
 bproc.renderer.set_max_amount_of_samples(100) # to speed up rendering, reduce the number of samples
 # Disable transparency so the background becomes transparent
