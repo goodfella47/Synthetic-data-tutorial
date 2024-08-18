@@ -1,21 +1,24 @@
 import blenderproc as bproc
+from blenderproc.python.camera import CameraUtility
 import bpy
 import numpy as np
 import argparse
 import random
 import os
+import json
 from colorsys import hsv_to_rgb
+
 parser = argparse.ArgumentParser()
-parser.add_argument('scene', nargs='?', default="NH1.obj", help="Path to the object file.")
-parser.add_argument('output_dir', nargs='?', default="", help="Path to where the final files, will be saved")
-parser.add_argument('--num_images', type=int, default=25, help="Number of images to generate")
+parser.add_argument('obj', default="surgical_tools_models/needle_holder/NH1.obj", help="Path to the object file.")
+parser.add_argument('camera_params', default="camera.json", help="Camera intrinsics in json format")
+parser.add_argument('output_dir', default="", help="Path to where the final files, will be saved")
+parser.add_argument('num_images', type=int, default=25, help="Number of images to generate")
 args = parser.parse_args()
 
 bproc.init()
-num_images = args.num_images
 
 # load the objects into the scene
-obj = bproc.loader.load_obj(args.scene)[0]
+obj = bproc.loader.load_obj(args.obj)[0]
 obj.set_cp("category_id", 1)
 
 # Randomly perturbate the material of the object
@@ -49,12 +52,25 @@ light.set_location(bproc.sampler.shell(
 
 light.set_energy(random.uniform(100, 1000))
 
-bproc.camera.set_resolution(640, 480)
+# Set camera intrinsics parameters
+with open(args.camera_params, "r") as file:
+    camera_params = json.load(file)
+
+fx = camera_params["fx"]
+fy = camera_params["fy"]
+cx = camera_params["cx"]
+cy = camera_params["cy"]
+im_width = camera_params["width"]
+im_height = camera_params["height"]
+K = np.array([[fx, 0, cx], 
+              [0, fy, cy], 
+              [0, 0, 1]])
+CameraUtility.set_intrinsics_from_K_matrix(K, im_width, im_height) 
 
 # Sample camera poses
 poses = 0
 tries = 0
-while tries < 10000 and poses < num_images:
+while tries < 10000 and poses < args.num_images:
 
     # Set a random world lighting strength
     bpy.data.worlds["World"].node_tree.nodes["Background"].inputs[1].default_value = np.random.uniform(0.1, 1.5)
@@ -80,7 +96,7 @@ while tries < 10000 and poses < num_images:
     tries += 1
 
 bproc.renderer.set_max_amount_of_samples(100) # to speed up rendering, reduce the number of samples
-# Enable transparency so the background becomes transparent
+# Disable transparency so the background becomes transparent
 bproc.renderer.set_output_format(enable_transparency=True)
 # add segmentation masks (per class and per instance)
 bproc.renderer.enable_segmentation_output(map_by=["category_id", "instance", "name"])

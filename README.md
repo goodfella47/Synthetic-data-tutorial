@@ -23,7 +23,7 @@ https://github.com/DLR-RM/BlenderProc
 
 ## Installation
 
-Its highly recommended to have a compeletely seperate Python environment for Synthetic data generation.
+Its highly recommended to have a compeletely seperate Python environment for synthetic data generation.
 We will install blenderproc as in the blenderproc readme instructions. Make sure you have conda installed.
 
 ```
@@ -50,7 +50,7 @@ For this reason you will find that you cannot simply debug through your IDE. For
 The Blenderproc repository has many useful examples in the [examples folder](https://github.com/DLR-RM/BlenderProc/tree/main/examples). But in this repo you will find examples that are targeted for our task.
 
 - Render and paste on backgrounds: [examples/render_and_paste](examples/render_and_paste)
-- Render on HDRI maps: 
+- Render on HDRI maps: [examples/render_on_hdri](examples/render_on_hdri)
 
 
 

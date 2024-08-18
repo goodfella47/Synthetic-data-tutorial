@@ -1,14 +1,20 @@
-This is an augmented https://github.com/DLR-RM/BlenderProc/tree/main/examples/advanced/random_backgrounds example.
+This is an enhanced version of the [random backgrounds](https://github.com/DLR-RM/BlenderProc/tree/main/examples/advanced/random_backgrounds) example from BlenderProc. In this example, objects are rendered on a transparent background in PNG format, and then a background image is added behind them.
 
-In this example we render the objects on a transparent background (in .PNG format) and then we paste a background image behind them.
+
 
 <img src="../../assets/copy_paste_examples.png" alt="render" width="900"/> 
 
-**Main code explanation:**
+# Usage
+```bash
+blenderproc run main.py <your_args>
+python paste_on_random_background.py <your_args>
+```
+
+# [main](main.py) code explanation
 
 ## Step 1: Loading and setting up the 3D model
 
-We load the 3D model and set up its materials:
+First, load the 3D model and set up its materials:
 
 ```python
 obj = bproc.loader.load_obj(args.scene)[0]
@@ -18,7 +24,11 @@ obj.set_cp("category_id", 1)
 
 **Explanation**: The above code loads a 3D model in .obj format and assigns a category ID, which is used for segmentation labeling. You can hide objects if they aren’t required in the final render.
 
+<span style="color: red;">Note:</span> Please be aware that `category_id=0` is reserved for the background and will be ignored during processing. Make sure to assign category IDs starting from 1 for objects you want to include in the segmentation and rendering.
+
+
 ## Step 2: Set the object materials
+Next, apply random perturbations to the object's materials:
 
 ```python
 # Randomly perturbate the material of the object
@@ -36,7 +46,7 @@ For more information on material properties, refer to the [Blender manual](https
 
 ## Step 3: Setting up lighting
 
-We create a point light and position it randomly around the object:
+Create and randomly position a point light around the object:
 
 ```python
 light = bproc.types.Light()
@@ -53,12 +63,27 @@ light.set_energy(random.uniform(100, 1000))
 
 **Explanation**: This step adds a point light and positions it randomly, providing variation in lighting conditions. Other light types can be explored in the [Blender manual](https://docs.blender.org/manual/en/latest/render/lights/light_object.html).
 
-## Step 4: Camera setup and positioning
-
-We set up the camera resolution and create multiple camera poses:
+## Step 4: Camera setup
+The following code sets the camera's intrinsic parameters:
 
 ```python
-bproc.camera.set_resolution(640, 480)
+K = np.array([[fx, 0, cx], 
+              [0, fy, cy], 
+              [0, 0, 1]])
+CameraUtility.set_intrinsics_from_K_matrix(K, im_width, im_height)
+```
+**Explanation**: 
+K defines how 3D points are projected onto the 2D image plane.
+- `fx` and `fy` are focal lengths in pixels.
+- `cx` and `cy` are the coordinates of the image center.
+
+<span style="color: red;">Note:</span> The camera intrinsics provided (fx, fy, cx, cy) are calibrated values. They have been precisely determined through a camera calibration process of the real data.
+
+## Step 5: Camera positioning
+
+Create multiple random camera poses:
+
+```python
 
 poses = 0
 tries = 0
@@ -101,9 +126,9 @@ Elevation is directly represented by the elevation_min and elevation_max paramet
 Azimuth is implicitly sampled across the full 360° range.
 Distance (not part of the horizontal system but necessary in 3D space) is represented by radius_min and radius_max.
 
-## Step 5: Rendering settings
+## Step 6: Rendering settings
 
-We set up the rendering parameters:
+Set the rendering parameters:
 
 ```python
 bproc.renderer.set_max_amount_of_samples(100)
@@ -113,9 +138,9 @@ bproc.renderer.enable_segmentation_output(map_by=["category_id", "instance", "na
 
 **Explanation**: This configures the renderer to generate images with transparency and segmentation masks. Reducing the sample count can speed up the rendering process.
 
-## Step 6: Rendering and saving data
+## Step 7: Rendering and saving data
 
-Finally, we render the images and save the data in COCO format:
+Render the images and save the output in COCO format:
 
 ```python
 data = bproc.renderer.render()
@@ -130,7 +155,9 @@ bproc.writer.write_coco_annotations(os.path.join(args.output_dir, 'coco_data'),
 
 **Explanation**: This step renders the images and saves the annotations in COCO format, commonly used for object detection and segmentation.
 
-## Step 7: Paste the background
+The mask_encoding_format parameter controls the format used for encoding segmentation masks when saving them in COCO format. There are two primary formats supported: RLE (Run-Length Encoding) and Polygon. 
+
+## Step 8: Paste the background
 Finally, overlay the rendered objects onto random background images:
 
 ```bash
