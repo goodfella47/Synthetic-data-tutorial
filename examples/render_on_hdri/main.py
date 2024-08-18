@@ -9,10 +9,12 @@ import json
 from colorsys import hsv_to_rgb
 
 parser = argparse.ArgumentParser()
-parser.add_argument('obj', default="surgical_tools_models/needle_holder/NH1.obj", help="Path to the object file.")
-parser.add_argument('camera_params', default="camera.json", help="Camera intrinsics in json format")
-parser.add_argument('output_dir', default="", help="Path to where the final files, will be saved")
-parser.add_argument('num_images', type=int, default=25, help="Number of images to generate")
+parser.add_argument('--obj', default="surgical_tools_models/needle_holder/NH1.obj", help="Path to the object file.")
+parser.add_argument('--camera_params', default="camera.json", help="Camera intrinsics in json format")
+parser.add_argument('--output_dir', default="", help="Path to where the final files, will be saved")
+parser.add_argument('--num_images', type=int, default=25, help="Number of images to generate")
+parser.add_argument('--haven_path', default="/datashare/haven/", help="Path to the haven hdri images")
+
 args = parser.parse_args()
 
 bproc.init()
