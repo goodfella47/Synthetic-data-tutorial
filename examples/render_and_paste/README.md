@@ -4,10 +4,10 @@ This is an enhanced version of the [random backgrounds](https://github.com/DLR-R
 
 <img src="../../assets/copy_paste_examples.png" alt="render" width="900"/> 
 
-# Usage
+# Usage example
 ```bash
-blenderproc run main.py <your_args>
-python paste_on_random_background.py <your_args>
+blenderproc run examples/render_and_paste/main.py
+python examples/render_and_paste/paste_on_random_background.py -i coco_data/images -b /datashare/project/train2017
 ```
 
 # [main](main.py) code explanation

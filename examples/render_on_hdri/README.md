@@ -6,7 +6,12 @@ You can think of it as an orb in 3D space that encapsulates your scene.
 
 
 You are provided with lots of different HDRI's in the `/datashare/haven` folder.
-[Haven](https://polyhaven.com) stores many free 3D assets, you can use any 3D asset.
+[Haven](https://polyhaven.com) stores many free 3D assets. For this project you can use any 3D asset.
+
+# Usage example
+```bash
+blenderproc run examples/render_on_hdri/main.py
+```
 
 Use the following code to apply a random HDRI to the scene from the Haven folder:
 
@@ -20,3 +25,4 @@ Make sure to disable background transparency
 ```python
 bproc.renderer.set_output_format(enable_transparency=False)
 ```
+
