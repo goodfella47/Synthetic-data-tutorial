@@ -1,8 +1,9 @@
 # Tutorial: Generating Synthetic Data with Python, Blender, and BlenderProc
 
-## Introduction to Blender and BlenderProc
+## Introduction
 
 Before we dive into the code, let's understand the tools we're using:
+
 
 ### Blender
 
@@ -18,6 +19,7 @@ Once we set up these elements, we can instruct Blender to render the scene:
 <img src="assets/box_render.png" alt="box_render" width="700"/>
 
 Blender supports Physically Based Rendering (PBR), an advanced technique that simulates realistic light bounces and material-light interactions to achieve photorealism. PBR is suitable for synthetic data generation, as it produces images closely resembling reality.
+
 
 ### 3D mehses
 You are provided with 3D CAD models in .obj format of a needle holder and tweezers. There are several models for each instrument, with each model representing a different articulation angle.
@@ -40,6 +42,7 @@ There is an accompanying .mat file that contains material information for the me
 
 You can view the meshes with software such as [Microsoft 3D viewer](https://apps.microsoft.com/detail/9nblggh42ths?rtc=1&hl=en-il&gl=IL) or [MeshLab](https://www.meshlab.net).
 
+
 ### BlenderProc
 
 BlenderProc is an open-source project for creating synthetic data using Blender and Python. It's designed to make the process of generating large datasets for computer vision tasks easier and more efficient. As you will see, it simplifies many of the complex tasks involved in synthetic data generation, especially for tasks like object detection, segmentation, and pose estimation...
@@ -47,6 +50,7 @@ BlenderProc is an open-source project for creating synthetic data using Blender 
 <img src="https://user-images.githubusercontent.com/6104887/137109535-275a2aa3-f5fd-4173-9d16-a9a9b86f66e7.gif" alt="BlenderProc" width="700"/>
 
 https://github.com/DLR-RM/BlenderProc
+
 
 ## Installation
 
@@ -64,6 +68,7 @@ The following will automatically install Blender for us:
 blenderproc quickstart
 ```
 
+
 ## Usage
 
 BlenderProc has to be run inside the blender python environment, as only there we can access the blender API. Therefore, instead of running your script with the usual python interpreter, the command line interface of BlenderProc has to be used.
@@ -72,6 +77,7 @@ blenderproc run <your_python_script>
 ```
 For this reason you will find that you cannot simply debug through your IDE. For debugging instructions refer to the `Breakpoint-Debugging in IDEs` section in the official [BlenderProc README](https://github.com/DLR-RM/BlenderProc).
 
+
 ## Examples
 
 The Blenderproc repository has many useful examples in the [examples folder](https://github.com/DLR-RM/BlenderProc/tree/main/examples). In this repo you will find examples that are targeted for our task.
@@ -79,6 +85,7 @@ The Blenderproc repository has many useful examples in the [examples folder](htt
 ### Examples in this repo:
 - Render and paste on backgrounds: [examples/render_and_paste](examples/render_and_paste)
 - Render on HDRI maps: [examples/render_on_hdri](examples/render_on_hdri)
+
 
 
 
