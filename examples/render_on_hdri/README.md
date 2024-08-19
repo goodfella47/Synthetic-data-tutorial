@@ -5,13 +5,15 @@ You can think of it as an orb in 3D space that encapsulates your scene.
 <img src="../../assets/HDRI_example.png" alt="render" width="300"/> 
 
 
-You are provided with lots of different HDRI's in the `datashare/haven` folder.
-Use the following code to apply a random HDRI to the scene:
+You are provided with lots of different HDRI's in the `/datashare/haven` folder.
+[Haven](https://polyhaven.com) stores many free 3D assets, you can use any 3D asset.
+
+Use the following code to apply a random HDRI to the scene from the Haven folder:
 
 ```python
 # Set a random hdri from the given haven directory as background
-haven_hdri_path = bproc.loader.get_random_world_background_hdr_img_path_from_haven(args.haven_path)
-bproc.world.set_world_background_hdr_img(haven_hdri_path)
+random_hdr_file = random.choice(hdr_files)
+bproc.world.set_world_background_hdr_img(random_hdr_file)
 ```
 
 Make sure to disable background transparency

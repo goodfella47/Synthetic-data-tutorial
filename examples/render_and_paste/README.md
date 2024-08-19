@@ -24,11 +24,11 @@ obj.set_cp("category_id", 1)
 
 **Explanation**: The above code loads a 3D model in .obj format and assigns a category ID, which is used for segmentation labeling. You can hide objects if they aren’t required in the final render.
 
-<span style="color: red;">Note:</span> Please be aware that `category_id=0` is reserved for the background and will be ignored during processing. Make sure to assign category IDs starting from 1 for objects you want to include in the segmentation and rendering.
+<span style="color: red;">Note:</span> Please be aware that `category_id=0` is reserved for the background and will be ignored during processing. Make sure to assign category IDs starting from 1 for objects you want to include in the segmentation.
 
 
 ## Step 2: Set the object materials
-Next, apply random perturbations to the object's materials:
+Next, apply random perturbations to the object's material properties:
 
 ```python
 # Randomly perturbate the material of the object
@@ -39,8 +39,20 @@ mat.set_principled_shader_value("Metallic", 1)
 mat.set_principled_shader_value("Roughness", 0.2)
 ```
 
-**Explanation**: This sets the material properties such as Specular, Roughness, and Metallic using the Principled BSDF shader.
-Some object have more than one material. For example, the needle holder has one material for the metalic part (`mat = obj.get_materials()[0]`) and another material for the golden part (`mat = obj.get_materials()[1]`).
+**Explanation**: This sets the material properties of the object such as Specular, Roughness, and Metallic using the Principled BSDF shader (the standard shader).
+
+The material is responsible for how the light interacts with the object.
+
+
+### Roughness
+
+<img src="https://docs.blender.org/manual/en/latest/_images/render_shader-nodes_shader_principled-roughness.webp" alt="render" width="700"/> 
+
+### Metallic
+
+<img src="https://docs.blender.org/manual/en/latest/_images/render_shader-nodes_shader_principled-metallic.webp" alt="render" width="700"/> 
+
+Some object have more than one material. For example, the needle holder has one material for the metalic part (`mat = obj.get_materials()[0]`) and another material for the golden part on its handle (`mat = obj.get_materials()[1]`).
 
 For more information on material properties, refer to the [Blender manual](https://docs.blender.org/manual/en/latest/render/shader_nodes/shader/principled.html).
 
@@ -61,7 +73,7 @@ light.set_location(bproc.sampler.shell(
 light.set_energy(random.uniform(100, 1000))
 ```
 
-**Explanation**: This step adds a point light and positions it randomly, providing variation in lighting conditions. Other light types can be explored in the [Blender manual](https://docs.blender.org/manual/en/latest/render/lights/light_object.html).
+**Explanation**: This step adds a point light, positions it randomly, and then sets random light intensity, providing variation in lighting conditions. Other light types can be explored in the [Blender manual](https://docs.blender.org/manual/en/latest/render/lights/light_object.html).
 
 ## Step 4: Camera setup
 The following code sets the camera's intrinsic parameters:
@@ -77,7 +89,7 @@ K defines how 3D points are projected onto the 2D image plane.
 - `fx` and `fy` are focal lengths in pixels.
 - `cx` and `cy` are the coordinates of the image center.
 
-<span style="color: red;">Note:</span> The camera intrinsics provided (fx, fy, cx, cy) are calibrated values. They have been precisely determined through a camera calibration process of the real data.
+<span style="color: red;">Note:</span> The provided camera intrinsics (fx, fy, cx, cy) are calibrated values. They have been precisely determined through a camera calibration process from the real data.
 
 ## Step 5: Camera positioning
 
